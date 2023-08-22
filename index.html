@@ -25,11 +25,32 @@
         }
         
         // Calculate the difference in days between two dates
-        function calculateDateDifference(startDate, endDate) {
+        // Calculate the difference in weekdays (excluding weekends) between two dates
+        function calculateDateDifference(startDate, endDate, onlyWeekDays) {
+            console.log('startDate: '+ startDate);
+            console.log('endDate: '+ endDate);
             const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-            return (endDate - startDate) / oneDay;
+            const daysDifference = (endDate - startDate) / oneDay;
+            const days = [];
+            
+            for (let i = 0; i <= daysDifference; i++) {
+                const currentDate = new Date(startDate.getTime() + (i * oneDay));
+                const dayOfWeek = currentDate.getDay();
+                
+                // Add the current date to weekdays if it's not a weekend (0 = Sunday, 6 = Saturday)
+                if (onlyWeekDays) {
+                    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                        days.push(currentDate);
+                    }
+                } else {
+                    days.push(currentDate);
+                }
+            }
+            
+            return days.length;
         }
-        
+
+
         // Main function to handle countdown calculation
         function calculateCountdown() {
             const queryParams = getQueryParams();
@@ -39,7 +60,10 @@
             const targetDateStr = queryParams['targetDate'];
             const title = queryParams['title'];
             const info = queryParams['info'];
+            const onlyWeekDays = queryParams['onlyWeekDays'];
             
+            console.log('onlyWeekDays: '+ onlyWeekDays);
+
             if (!targetDateStr) {
                 document.getElementById('countdownResult').textContent = 'Please provide a valid target date.';
                 return;
@@ -48,8 +72,14 @@
             const today = new Date();
             const targetDate = new Date(targetDateStr);
             
-            const daysDifference = calculateDateDifference(today, targetDate);
+            if (onlyWeekDays == "true") {
+                var daysDifference = calculateDateDifference(today, targetDate, true);
+            } else {
+                var daysDifference = calculateDateDifference(today, targetDate, false);
+            }
             
+            console.log('daysDifference: '+ daysDifference);
+
             let countdownMessage;
             if (daysDifference > 0) {
                 countdownMessage = `${Math.floor(daysDifference)} days remaining`;
