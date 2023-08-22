@@ -27,16 +27,25 @@
         // Calculate the difference in days between two dates
         // Calculate the difference in weekdays (excluding weekends) between two dates
         function calculateDateDifference(startDate, endDate, onlyWeekDays) {
-            console.log('startDate: '+ startDate);
-            console.log('endDate: '+ endDate);
+            console.log('startDate: ' + startDate);
+            console.log('endDate: ' + endDate);
             const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
-            const daysDifference = (endDate - startDate) / oneDay;
+            // Calculate the absolute difference
+            var daysDifference = Math.abs((endDate - startDate) / oneDay); 
+            
             const days = [];
+            // Increment or decrement based on date range
+            const increment = startDate <= endDate ? 1 : -1; 
+            
+            // remove exatr day from past days
+            if (increment < 0) {
+                daysDifference = daysDifference - 1;
+            }
             
             for (let i = 0; i <= daysDifference; i++) {
-                const currentDate = new Date(startDate.getTime() + (i * oneDay));
+                const currentDate = new Date(startDate.getTime() + (i * increment * oneDay));
                 const dayOfWeek = currentDate.getDay();
-                
+
                 // Add the current date to weekdays if it's not a weekend (0 = Sunday, 6 = Saturday)
                 if (onlyWeekDays) {
                     if (dayOfWeek !== 0 && dayOfWeek !== 6) {
@@ -46,8 +55,8 @@
                     days.push(currentDate);
                 }
             }
-            
-            return days.length;
+
+            return days.length * increment;
         }
 
 
