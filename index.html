@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown to Date</title>
+</head>
+<body>
+    <div style="text-align: center;">
+        <h1 id="title"> Countdown to Date</h1>
+        <p id="info">This page calculates the countdown of days from today to a specified date.</p>
+        
+        <h1 id="countdownResult"></h1>
+    </div>
+    
+    <script>
+        // Function to parse query parameters from the URL
+        function getQueryParams() {
+            const queryParams = {};
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            for (const [key, value] of urlParams.entries()) {
+                queryParams[key] = value;
+            }
+            
+            return queryParams;
+        }
+        
+        // Calculate the difference in days between two dates
+        function calculateDateDifference(startDate, endDate) {
+            const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+            return (endDate - startDate) / oneDay;
+        }
+        
+        // Main function to handle countdown calculation
+        function calculateCountdown() {
+            const queryParams = getQueryParams();
+
+            console.log(queryParams);
+
+            const targetDateStr = queryParams['targetDate'];
+            const title = queryParams['title'];
+            const info = queryParams['info'];
+            
+            if (!targetDateStr) {
+                document.getElementById('countdownResult').textContent = 'Please provide a valid target date.';
+                return;
+            }
+            
+            const today = new Date();
+            const targetDate = new Date(targetDateStr);
+            
+            const daysDifference = calculateDateDifference(today, targetDate);
+            
+            let countdownMessage;
+            if (daysDifference > 0) {
+                countdownMessage = `${Math.floor(daysDifference)} days remaining`;
+            } else if (daysDifference < 0) {
+                countdownMessage = `${Math.abs(Math.ceil(daysDifference))} days since deadline`;
+            } else {
+                countdownMessage = `Today is the target date!`;
+            }
+            
+            document.getElementById('countdownResult').textContent = countdownMessage;
+            document.getElementById('title').textContent = title;
+            document.getElementById('info').textContent = info;
+
+            document.body.style.backgroundColor = "#dddddd";
+        }
+        
+        // Call the main function when the page loads
+        calculateCountdown();
+    </script>
+</body>
+</html>
